@@ -1,2 +1,1 @@
-# open news
- 
+# Open News
