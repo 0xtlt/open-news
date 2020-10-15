@@ -10,7 +10,7 @@ export {
 
 export { renderFileToString } from "https://deno.land/x/dejs@0.8.0/mod.ts";
 
-export {} from "https://deno.land/x/markdown@v2.0.0/mod.ts";
+export { Marked } from "https://deno.land/x/markdown@v2.0.0/mod.ts";
 
 export {
   Database,

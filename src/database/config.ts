@@ -43,6 +43,7 @@ class Article extends Model {
     title: DataTypes.STRING,
     isDraft: DataTypes.BOOLEAN,
     content: DataTypes.STRING,
+    handle: DataTypes.STRING,
     authorId: Relationships.belongsTo(Author),
   };
 
