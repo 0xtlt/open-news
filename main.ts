@@ -1,5 +1,6 @@
 const API_VERSION: string = "2020-10";
 const CACHE_TIME: number = 10 * 1000;
+const THEME = "default";
 import {
   dirname,
   join,
@@ -15,31 +16,11 @@ const decoder = new TextDecoder("utf-8");
 const __dirname = dirname(import.meta.url);
 const app = opine();
 
-import { Article, Author } from "./src/database/config.ts";
+import { Article, Author, Source } from "./src/database/config.ts";
 import cache from "./src/middlewares/cache.ts";
 
-// Test
-
-const author = await Author.create({
-  name: "Thomas Tastet",
-  description: "Super",
-  gravatar: "test",
-  password: "test",
-  token: "test",
-});
-
-console.log(author);
-
-await Article.create({
-  title: "Hello world",
-  isDraft: false,
-  content: "# Hello world !",
-  handle: "hello-world",
-  authorId: author[0].id,
-});
-
 // View engine setup
-app.set("views", join(__dirname, "views"));
+app.set("views", join(__dirname, "themes", THEME));
 app.set("view engine", "ejs");
 app.engine("ejs", renderFileToString);
 
@@ -59,27 +40,57 @@ app.get("/", function (req, res) {
 });
 
 app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const article = await Article.where({
-    handle: req.params.handle,
-  }).find(1);
+  const ArticleContent = await Article.where("handle", req.params.handle)
+    .first();
 
-  if (!article) {
+  if (!ArticleContent) {
     return next();
   }
 
-  res.json(article);
+  const AuthorContent = await Article.where("id", ArticleContent.id.toString())
+    .author();
+
+  res.json({
+    article: {
+      id: ArticleContent.id,
+      title: ArticleContent.title,
+      content: Marked.parse(ArticleContent.content).content,
+      handle: req.params.handle,
+    },
+    author: {
+      id: AuthorContent.id,
+      name: AuthorContent.name,
+      description: AuthorContent.description,
+      gravatar: AuthorContent.gravatar,
+    },
+  });
 });
 
 app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const article = await Article.where({
-    handle: req.params.handle,
-  }).find(1);
+  const ArticleContent = await Article.where("handle", req.params.handle)
+    .first();
 
-  if (!article) {
+  if (!ArticleContent) {
     return next();
   }
 
-  res.send(Marked.parse(article.content).content);
+  const AuthorContent = await Article.where("id", ArticleContent.id.toString())
+    .author();
+
+  res.render("article.ejs", {
+    article: {
+      id: ArticleContent.id,
+      title: ArticleContent.title,
+      content: Marked.parse(ArticleContent.content).content,
+      handle: req.params.handle,
+    },
+    author: {
+      id: AuthorContent.id,
+      name: AuthorContent.name,
+      description: AuthorContent.description,
+      gravatar: AuthorContent.gravatar,
+    },
+  });
 });
 
 app.use("/medias", serveStatic(join(__dirname, "medias")));

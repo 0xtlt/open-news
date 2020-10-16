@@ -1,11 +1,15 @@
 import { Database, DataTypes, Model, Relationships } from "../../deps.ts";
 
-const db = new Database({ dialect: "sqlite3", debug: false }, {
-  filepath: "./database.sqlite",
+const db = new Database({ dialect: "mysql", debug: false }, {
+  database: "opennews",
+  host: "localhost",
+  username: "opennews",
+  password: "",
+  port: 8889,
 });
 
 class Source extends Model {
-  static table = "sources";
+  static table = "source";
   static timestamps = true;
 
   static fields = {
@@ -14,6 +18,10 @@ class Source extends Model {
     url: DataTypes.STRING,
     isEnabled: DataTypes.BOOLEAN,
   };
+
+  static articles() {
+    return this.hasMany(Article);
+  }
 }
 
 class Author extends Model {
@@ -45,10 +53,19 @@ class Article extends Model {
     content: DataTypes.STRING,
     handle: DataTypes.STRING,
     authorId: Relationships.belongsTo(Author),
+    source: Relationships.belongsTo(Source),
   };
 
   static author() {
     return this.hasOne(Author);
+  }
+
+  static source() {
+    return this.hasOne(Source);
+  }
+
+  static reports() {
+    return this.hasMany(Report);
   }
 }
 
@@ -87,12 +104,13 @@ class Analytic extends Model {
     uuid: DataTypes.UUID,
     from: DataTypes.STRING, // Can be "website" or the website where the article is seen
     session: DataTypes.UUID, // token of the session
+    handle: DataTypes.STRING,
   };
 }
 
-db.link([Article, Source, Report, Author, Media, Analytic]);
+db.link([Source, Author, Article, Media, Report, Analytic]);
 
-await db.sync({ drop: true });
+//await db.sync({ drop: false });
 //await db.close();
 
 export { Analytic, Article, Author, Media, Report, Source };

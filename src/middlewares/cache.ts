@@ -8,6 +8,8 @@ function cache(duration: number) {
       tmp[key] &&
       (Number(new Date()) - Number(new Date(tmp[key].date)) < duration)
     ) {
+      res.set("Content-type", tmp[key].type);
+
       return res.send(tmp[key].content);
     }
 
@@ -17,11 +19,12 @@ function cache(duration: number) {
 
     res.sendResponse = res.send;
     res.send = (body: string) => {
+      res.sendResponse(body);
       tmp[key] = {
         date: new Date(),
         content: body,
+        type: res.get("Content-Type"),
       };
-      res.sendResponse(body);
     };
     next();
   };
