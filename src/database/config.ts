@@ -49,6 +49,7 @@ class Article extends Model {
   static fields = {
     id: { primaryKey: true, autoIncrement: true, type: DataTypes.INTEGER },
     title: DataTypes.STRING,
+    description: DataTypes.STRING,
     isDraft: DataTypes.BOOLEAN,
     content: DataTypes.STRING,
     handle: DataTypes.STRING,
