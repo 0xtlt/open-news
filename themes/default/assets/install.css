@@ -132,3 +132,9 @@ body {
     transform: rotate(360deg);
   }
 }
+
+input:disabled,
+textarea:disabled,
+button:disabled {
+  cursor: not-allowed;
+}

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/assets/install.css" />
   </head>
   <body>
-    <form action="/" id="installForm" class="form" method="post">
+    <form action="/install" id="installForm" class="form" method="post">
       <h1 class="form__title"><%= locale.install.introduction %></h1>
       <h2 class="form__subtitle"><%= locale.install.authorStep %></h2>
       <div class="inputBox">
@@ -24,6 +24,10 @@
         ></textarea>
       </div>
       <div class="inputBox">
+        <label for="userEmail"><%= locale.install.email %></label>
+        <input required type="email" id="userEmail" name="user[email]" />
+      </div>
+      <div class="inputBox">
         <label for="userPassword"><%= locale.install.password %></label>
         <input
           required
@@ -36,6 +40,10 @@
       <div class="inputBox">
         <label for="websiteName"><%= locale.install.websiteName %></label>
         <input required type="text" id="websiteName" name="website[name]" />
+      </div>
+      <div class="inputBox">
+        <label for="websiteURL"><%= locale.install.websiteURL %></label>
+        <input required type="url" id="websiteURL" name="website[url]" />
       </div>
       <div class="inputBox">
         <label for="websiteDescription"
@@ -59,6 +67,16 @@
       <div class="inputBox">
         <label for="databaseHost"><%= locale.install.databaseHost %></label>
         <input required type="text" id="databaseHost" name="database[host]" />
+      </div>
+      <div class="inputBox">
+        <label for="databasePort"><%= locale.install.databasePort %></label>
+        <input
+          required
+          type="number"
+          value="3306"
+          id="databasePort"
+          name="database[port]"
+        />
       </div>
       <div class="inputBox">
         <label for="databasePassword"

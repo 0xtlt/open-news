@@ -6,14 +6,17 @@
     "authorStep": "Author informations",
     "username": "Username :",
     "description": "Description (Markdown) :",
+    "email": "Email (for Gravatar only) :",
     "password": "Password :",
     "websiteStep": "Website informations",
     "websiteName": "Name :",
+    "websiteURL": "URL :",
     "websiteDescription": "Description (Markdown) :",
     "databaseStep": "Database credentials (MySQL)",
     "databaseName": "Database name :",
     "databaseUser": "Database user :",
     "databaseHost": "Database host :",
+    "databasePort": "Database port :",
     "databasePassword": "Database password :",
     "submit": "Install"
   }

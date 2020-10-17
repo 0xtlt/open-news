@@ -7,6 +7,7 @@ let open_config = {
 };
 
 import {
+  Database,
   dirname,
   join,
   json,
@@ -77,6 +78,58 @@ app.use((req, res, next) => {
 
   req.app.locals.locale = LOCALES[locale];
   next();
+});
+
+app.post("/json/install", async function (req, res, next) {
+  if (open_config.initied) {
+    return next();
+  }
+
+  if (
+    !req.parsedBody || !req.parsedBody["user[name]"] ||
+    !req.parsedBody["user[email]"] || !req.parsedBody["user[password]"] ||
+    !req.parsedBody["website[name]"] ||
+    !req.parsedBody["website[url]"] ||
+    !req.parsedBody["website[description]"] ||
+    !req.parsedBody["database[name]"] ||
+    !req.parsedBody["database[user]"] ||
+    !req.parsedBody["database[host]"] ||
+    !req.parsedBody["database[port]"] ||
+    !req.parsedBody["database[password]"] ||
+    isNaN(req.parsedBody["database[port]"]) ||
+    Number(req.parsedBody["database[port]"]) < 1
+  ) {
+    return res.json({
+      success: false,
+      message: "*",
+    });
+  }
+
+  const db_test = new Database("mysql", {
+    database: req.parsedBody["database[name]"],
+    host: req.parsedBody["database[host]"],
+    username: req.parsedBody["database[user]"],
+    password: req.parsedBody["database[password]"],
+    port: Number(req.parsedBody["database[port]"]), // optional
+  });
+
+  if (!await db_test.ping()) {
+    await db_test.close();
+    return res.json({
+      success: false,
+      message: "errorDB",
+    });
+  }
+
+  await db_test.close();
+
+  res.json(req.parsedBody);
+});
+
+app.post("/install", function (req, res, next) {
+  if (open_config.initied) {
+    return next();
+  }
 });
 
 app.use((req, res, next) => {

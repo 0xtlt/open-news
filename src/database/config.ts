@@ -109,9 +109,21 @@ class Analytic extends Model {
   };
 }
 
-db.link([Source, Author, Article, Media, Report, Analytic]);
+class Website extends Model {
+  static table = "websites";
+  static timestamps = true;
+
+  static fields = {
+    id: { primaryKey: true, autoIncrement: true, type: DataTypes.INTEGER },
+    name: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    url: DataTypes.STRING,
+  };
+}
+
+db.link([Source, Author, Article, Media, Report, Analytic, Website]);
 
 //await db.sync({ drop: false });
 //await db.close();
 
-export { Analytic, Article, Author, Media, Report, Source };
+export { Analytic, Article, Author, Media, Report, Source, Website };
