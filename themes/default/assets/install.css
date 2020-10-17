@@ -1,14 +1,112 @@
 :root {
   --background: #f4f4f4;
+  --shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+
+  --padding-normal: 1.5rem 2rem;
+  --padding-button: 1rem 1rem;
+  --padding-light: 0.7rem 1rem;
+
+  --size-big: 4rem;
+  --size-medium: 3rem;
+  --size-semi: 2rem;
+  --size-up: 1.2rem;
+  --size-normal: 1rem;
+  --size-light: 0.7rem;
+
+  --radius: 5px;
+
+  --primary: #c0bebe;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
   display: flex;
-  background: var(--root);
+  background: var(--background);
+  padding: var(--padding-normal);
 }
 
 .form {
   margin: auto;
+  box-shadow: var(--shadow);
+  padding: var(--padding-normal);
+  max-width: 90%;
+  width: 800px;
+  background: white;
+}
+
+.form__title {
+  text-align: center;
+  font-size: var(--size-medium);
+}
+
+.form__subtitle {
+  font-size: var(--size-semi);
+  position: relative;
+  display: inline-block;
+  margin-top: var(--size-semi);
+  margin-bottom: var(--size-semi);
+}
+
+.form__subtitle:after {
+  display: block;
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 50%;
+  height: 2px;
+  background: var(--primary);
+}
+
+.inputBox {
+  margin-bottom: var(--size-up);
+}
+
+.inputBox label {
+  display: block;
+  margin-bottom: var(--size-light);
+}
+
+.inputBox input,
+.inputBox textarea {
+  font-size: var(--size-up);
+  padding: var(--padding-light);
+  width: 100%;
+  border-radius: var(--radius);
+  border: solid 1px var(--primary);
+}
+
+.submit {
+  padding: var(--padding-button);
+  border-radius: var(--radius);
+  background: var(--background);
+  width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    --padding-normal: 1.5rem 2rem;
+    --padding-button: 1rem 1rem;
+    --padding-light: 0.7rem 1rem;
+
+    --size-big: 2rem;
+    --size-medium: 1.8rem;
+    --size-semi: 1.5rem;
+    --size-up: 1.2rem;
+    --size-normal: 1rem;
+    --size-light: 0.7rem;
+  }
+
+  body {
+    padding: 0;
+  }
+
+  .form {
+    max-width: 100%;
+  }
 }

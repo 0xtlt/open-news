@@ -1,6 +1,20 @@
 {
   "code": "en",
   "install": {
-    "title": "Open-News installation"
+    "title": "Open-News installation",
+    "introduction": "Welcome to your new Open-News installation",
+    "authorStep": "Author informations",
+    "username": "Username :",
+    "description": "Description (Markdown) :",
+    "password": "Password :",
+    "websiteStep": "Website informations",
+    "websiteName": "Name :",
+    "websiteDescription": "Description (Markdown) :",
+    "databaseStep": "Database credentials (MySQL)",
+    "databaseName": "Database name :",
+    "databaseUser": "Database user :",
+    "databaseHost": "Database host :",
+    "databasePassword": "Database password :",
+    "submit": "Install"
   }
 }

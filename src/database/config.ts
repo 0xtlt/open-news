@@ -31,7 +31,7 @@ class Author extends Model {
   static fields = {
     id: { primaryKey: true, autoIncrement: true, type: DataTypes.INTEGER },
     name: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.TEXT,
     gravatar: DataTypes.STRING, //md5 of email
     password: DataTypes.STRING, //bcrypt
     token: DataTypes.STRING,

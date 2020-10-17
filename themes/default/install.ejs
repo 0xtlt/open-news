@@ -4,8 +4,74 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= locale.install.title %></title>
+    <link rel="stylesheet" href="/assets/reset.css" />
+    <link rel="stylesheet" href="/assets/install.css" />
   </head>
   <body>
-    <form action="/" class="form" method="post"></form>
+    <form action="/" class="form" method="post">
+      <h1 class="form__title"><%= locale.install.introduction %></h1>
+      <h2 class="form__subtitle"><%= locale.install.authorStep %></h2>
+      <div class="inputBox">
+        <label for="userName"><%= locale.install.username %></label>
+        <input required type="text" id="userName" name="user[name]" />
+      </div>
+      <div class="inputBox">
+        <label for="userDescription"><%= locale.install.description %></label>
+        <textarea
+          required
+          id="userDescription"
+          name="user[description]"
+        ></textarea>
+      </div>
+      <div class="inputBox">
+        <label for="userPassword"><%= locale.install.password %></label>
+        <input
+          required
+          type="password"
+          id="userPassword"
+          name="user[password]"
+        />
+      </div>
+      <h2 class="form__subtitle"><%= locale.install.websiteStep %></h2>
+      <div class="inputBox">
+        <label for="websiteName"><%= locale.install.websiteName %></label>
+        <input required type="text" id="websiteName" name="website[name]" />
+      </div>
+      <div class="inputBox">
+        <label for="websiteDescription"
+          ><%= locale.install.websiteDescription %></label
+        >
+        <textarea
+          required
+          id="websiteDescription"
+          name="website[description]"
+        ></textarea>
+      </div>
+      <h2 class="form__subtitle"><%= locale.install.databaseStep %></h2>
+      <div class="inputBox">
+        <label for="databaseName"><%= locale.install.databaseName %></label>
+        <input required type="text" id="databaseName" name="database[name]" />
+      </div>
+      <div class="inputBox">
+        <label for="databaseUser"><%= locale.install.databaseUser %></label>
+        <input required type="text" id="databaseUser" name="database[user]" />
+      </div>
+      <div class="inputBox">
+        <label for="databaseHost"><%= locale.install.databaseHost %></label>
+        <input required type="text" id="databaseHost" name="database[host]" />
+      </div>
+      <div class="inputBox">
+        <label for="databasePassword"
+          ><%= locale.install.databasePassword %></label
+        >
+        <input
+          required
+          type="text"
+          id="databasePassword"
+          name="database[password]"
+        />
+      </div>
+      <button class="submit" type="submit"><%= locale.install.submit %></button>
+    </form>
   </body>
 </html>
