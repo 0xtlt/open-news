@@ -18,11 +18,17 @@ import {
 } from "./deps.ts";
 import { exists } from "./src/utils.ts";
 
+// Locales
+
+const LOCALES: any = {
+  "en": JSON.parse(await Deno.readTextFile("./locales/en.json")),
+};
+
 // Init
 
 console.log("Open News System");
 console.log("API VERSION :", API_VERSION);
-console.log("Sysstem VERSION :", VERSION);
+console.log("System VERSION :", VERSION);
 
 if (await exists("./config.json")) {
   console.log("Open News config...");
@@ -56,8 +62,22 @@ app.use(function (req, res, next) {
 });
 
 app.use((req, res, next) => {
+  // determine locale
+  const locale = req.get("Accept-Language")?.split(",")[0]?.split("-")[0];
+
+  if (!locale || !LOCALES[locale]) {
+    console.log(locale);
+    req.app.locals.locale = LOCALES["en"];
+    return next();
+  }
+
+  req.app.locals.locale = LOCALES[locale];
+  next();
+});
+
+app.use((req, res, next) => {
   if (!open_config.initied) {
-    return res.send("not configured");
+    return res.send("not configured in : " + req.app.locals.locale.code);
   }
 
   next();
