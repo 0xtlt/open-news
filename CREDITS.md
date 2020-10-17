@@ -1,1 +1,1 @@
-Icons by (Font Awesome Font Awesome - Dave Gandy)[https://fontawesome.io]
+Icons by [Font Awesome Font Awesome - Dave Gandy](https://fontawesome.io)
