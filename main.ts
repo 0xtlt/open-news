@@ -53,6 +53,11 @@ app.engine("ejs", renderFileToString);
 // Handle different incoming body types
 app.use(json());
 app.use(urlencoded());
+app.use(
+  "/assets",
+  serveStatic(join(__dirname, "themes", open_config.theme, "assets")),
+);
+
 app.use(function (req, res, next) {
   if (res.headers) {
     res.headers.set("x-powered-by", "Open News");
@@ -66,7 +71,6 @@ app.use((req, res, next) => {
   const locale = req.get("Accept-Language")?.split(",")[0]?.split("-")[0];
 
   if (!locale || !LOCALES[locale]) {
-    console.log(locale);
     req.app.locals.locale = LOCALES["en"];
     return next();
   }
@@ -77,7 +81,9 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   if (!open_config.initied) {
-    return res.send("not configured in : " + req.app.locals.locale.code);
+    return res.render("install.ejs", {
+      locale: req.app.locals.locale,
+    });
   }
 
   next();

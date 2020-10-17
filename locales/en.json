@@ -1,3 +1,6 @@
 {
-  "code": "en"
+  "code": "en",
+  "install": {
+    "title": "Open-News installation"
+  }
 }

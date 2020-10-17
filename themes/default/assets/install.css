@@ -1,0 +1,14 @@
+:root {
+  --background: #f4f4f4;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  background: var(--root);
+}
+
+.form {
+  margin: auto;
+}
