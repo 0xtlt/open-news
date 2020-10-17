@@ -79,6 +79,8 @@ body {
   width: 100%;
   border-radius: var(--radius);
   border: solid 1px var(--primary);
+  max-width: 100%;
+  min-width: 100%;
 }
 
 .submit {
@@ -86,6 +88,9 @@ body {
   border-radius: var(--radius);
   background: var(--background);
   width: 100%;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 @media screen and (max-width: 1024px) {
@@ -108,5 +113,22 @@ body {
 
   .form {
     max-width: 100%;
+  }
+}
+
+.loading {
+  animation: spin 3s infinite;
+  animation-timing-function: linear;
+  width: 1rem;
+  height: 1rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }

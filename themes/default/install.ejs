@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/assets/install.css" />
   </head>
   <body>
-    <form action="/" class="form" method="post">
+    <form action="/" id="installForm" class="form" method="post">
       <h1 class="form__title"><%= locale.install.introduction %></h1>
       <h2 class="form__subtitle"><%= locale.install.authorStep %></h2>
       <div class="inputBox">
@@ -71,7 +71,16 @@
           name="database[password]"
         />
       </div>
-      <button class="submit" type="submit"><%= locale.install.submit %></button>
+      <button class="submit" id="submitButton" type="submit">
+        <span class="text"><%= locale.install.submit %></span>
+        <img
+          style="display: none"
+          class="loading"
+          src="/assets/sync-alt.svg"
+          alt="loading"
+        />
+      </button>
     </form>
+    <script src="/assets/install.js" defer></script>
   </body>
 </html>
