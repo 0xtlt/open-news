@@ -22,6 +22,8 @@ import openDB from "./src/database/config.ts";
 import cache from "./src/middlewares/cache.ts";
 import { localeType } from "./src/types/locale.ts";
 import configFile from "./src/types/configFile.ts";
+import Cookies from "./src/middlewares/cookies.ts";
+import accountMiddleware from "./src/middlewares/account.ts";
 
 // Init
 
@@ -131,7 +133,7 @@ app.post("/json/install", async function (req, res, next) {
 
   await openDB.install();
 
-  await openDB.createAuthor({
+  const author = await openDB.createAuthor({
     name: req.parsedBody["user[name]"],
     description: req.parsedBody["website[description]"],
     email: req.parsedBody["user[email]"],
@@ -165,7 +167,7 @@ app.post("/json/install", async function (req, res, next) {
 
   res.json({
     success: true,
-    message: "",
+    message: author.token,
   });
 });
 
@@ -221,5 +223,9 @@ app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
 });
 
 app.use("/medias", serveStatic(join(__dirname, "medias")));
+
+app.use(Cookies());
+
+app.use(accountMiddleware);
 
 app.listen(3030);

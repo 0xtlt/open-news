@@ -169,7 +169,7 @@ class OpenDB {
 
   // Article
 
-  async getArticle(where: Values): Promise<resultArticle> {
+  async getArticle(where: Values): Promise<resultArticle | undefined> {
     const ArticleContent: ArticleType | null = await Article.where(where)
       .first();
 
@@ -200,6 +200,14 @@ class OpenDB {
   }
 
   // Author
+  async getAuthor(where: Values): Promise<AuthorType | undefined> {
+    const AuthorContent: AuthorType | null = await Author.where(where).first();
+
+    if (!AuthorContent) return undefined;
+
+    return AuthorContent;
+  }
+
   async createAuthor(
     data: {
       name: string;

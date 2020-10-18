@@ -26,3 +26,10 @@ export {
 } from "https://raw.githubusercontent.com/JamesBroadberry/deno-bcrypt/master/src/bcrypt/bcrypt.ts";
 
 export { encode, Hash } from "https://deno.land/x/checksum@1.4.0/mod.ts";
+
+export {
+  NextFunction,
+  ParamsDictionary,
+  Request,
+  Response,
+} from "https://deno.land/x/opine@0.23.1/src/types.ts";
