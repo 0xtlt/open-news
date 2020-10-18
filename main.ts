@@ -150,7 +150,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent: ArticleType = await Article.where(
+  const ArticleContent: ArticleType | null = await Article.where(
     "handle",
     req.params.handle,
   ).first();
@@ -159,10 +159,14 @@ app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
     return next();
   }
 
-  const AuthorContent: AuthorType = await Article.where(
+  const AuthorContent: AuthorType | null = await Article.where(
     "id",
     ArticleContent.id.toString(),
   ).author();
+
+  if (!AuthorContent) {
+    return next();
+  }
 
   res.json({
     article: {
@@ -182,7 +186,7 @@ app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
 });
 
 app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent: ArticleType = await Article.where(
+  const ArticleContent: ArticleType | null = await Article.where(
     "handle",
     req.params.handle,
   )
@@ -192,10 +196,14 @@ app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
     return next();
   }
 
-  const AuthorContent: AuthorType = await Article.where(
+  const AuthorContent: AuthorType | null = await Article.where(
     "id",
     ArticleContent.id.toString(),
   ).author();
+
+  if (!AuthorContent) {
+    return next();
+  }
 
   res.render("article.ejs", {
     article: {
