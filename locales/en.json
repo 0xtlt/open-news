@@ -19,5 +19,12 @@
     "databasePort": "Database port :",
     "databasePassword": "Database password :",
     "submit": "Install"
+  },
+  "adminLogin": {
+    "title": "Open-News Panel",
+    "introduction": "Welcome Back",
+    "username": "Username :",
+    "password": "Password :",
+    "submit": "Login"
   }
 }

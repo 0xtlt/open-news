@@ -12,11 +12,9 @@ async function accountMiddleware(
 ) {
   const token = req.app.locals?.cookies?.opentoken;
 
-  if (!token) {
-    req.app.locals.user = undefined;
-  }
-
-  req.app.locals.user = await openDB.getAuthor({ token: token });
+  req.app.locals.user = token
+    ? await openDB.getAuthor({ token: token })
+    : undefined;
 
   next();
 }

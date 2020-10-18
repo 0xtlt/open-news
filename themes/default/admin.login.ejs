@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="<%= code %>">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= locale.adminLogin.title %></title>
+    <link rel="stylesheet" href="/assets/reset.css" />
+    <link rel="stylesheet" href="/assets/panel.css" />
+  </head>
+  <body>
+    <form action="/admin/login" id="loginForm" class="form" method="post">
+      <h1 class="form__title"><%= locale.adminLogin.introduction %></h1>
+      <div class="inputBox">
+        <label for="userName"><%= locale.adminLogin.username %></label>
+        <input required type="text" id="userName" name="user[name]" />
+      </div>
+      <div class="inputBox">
+        <label for="userPassword"><%= locale.adminLogin.password %></label>
+        <input
+          required
+          type="password"
+          id="userPassword"
+          name="user[password]"
+        />
+      </div>
+      <button class="submit" id="submitButton" type="submit">
+        <span class="text"><%= locale.adminLogin.submit %></span>
+        <img
+          style="display: none"
+          class="loading"
+          src="/assets/sync-alt.svg"
+          alt="loading"
+        />
+      </button>
+    </form>
+
+    <script>
+      const form = window.loginForm;
+      const submitButton = window.submitButton;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        submitButton.querySelector("span").style.display = "none";
+        submitButton.querySelector("img").style.display = "block";
+        form.querySelectorAll("input, textarea, button").forEach((element) => {
+          element.disabled = true;
+        });
+
+        const response = await fetch("/admin/json/login", {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, cors, *same-origin
+          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "same-origin", // include, *same-origin, omit
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow", // manual, *follow, error
+          referrer: "no-referrer", // no-referrer, *client
+          body: JSON.stringify(
+            [...form.elements]
+              .map((element) => {
+                let tmp = {};
+                tmp[element.name] = element.value;
+                return tmp;
+              })
+              .reduce((accumulator, current) => ({
+                ...accumulator,
+                ...current,
+              })),
+          ),
+        });
+
+        const responseJSON = await response.json();
+
+        if (!responseJSON.success) {
+          submitButton.querySelector("span").style.display = "block";
+          submitButton.querySelector("img").style.display = "none";
+          form
+            .querySelectorAll("input, textarea, button")
+            .forEach((element) => {
+              element.disabled = false;
+            });
+          alert(responseJSON.message);
+          return;
+        }
+
+        setCookie("opentoken", responseJSON.message, 30);
+        window.location.replace("/admin");
+      });
+
+      function setCookie(name, value, days) {
+        let d = new Date();
+        d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+        document.cookie =
+          name + "=" + value + ";path=/;expires=" + d.toUTCString();
+      }
+    </script>
+  </body>
+</html>

@@ -44,7 +44,7 @@ form.addEventListener("submit", async (event) => {
   }
 
   setCookie("opentoken", responseJSON.message, 30);
-  window.location.reload();
+  window.location.replace("/admin");
 });
 
 function setCookie(name, value, days) {

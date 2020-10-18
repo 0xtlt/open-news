@@ -9,6 +9,7 @@ import {
 } from "../../deps.ts";
 import ArticleType from "../types/article.ts";
 import AuthorType from "../types/author.ts";
+import WebsiteType from "../types/website.ts";
 import resultArticle from "../types/resultArticle.ts";
 import SourceType from "../types/source.ts";
 import Values from "../types/values.ts";
@@ -238,6 +239,17 @@ class OpenDB {
     const source: SourceType = await Source.create(data);
 
     return source;
+  }
+
+  // Website
+  async createWebsite(data: {
+    name: string;
+    description: string;
+    url: string;
+  }): Promise<WebsiteType> {
+    const website: WebsiteType = await Website.create(data);
+
+    return website;
   }
 }
 

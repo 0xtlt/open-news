@@ -23,7 +23,7 @@ import cache from "./src/middlewares/cache.ts";
 import { localeType } from "./src/types/locale.ts";
 import configFile from "./src/types/configFile.ts";
 import Cookies from "./src/middlewares/cookies.ts";
-import accountMiddleware from "./src/middlewares/account.ts";
+import adminRouter from "./src/routes/admin.ts";
 
 // Init
 
@@ -78,16 +78,20 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(Cookies());
+
 app.use((req, _, next) => {
   // determine locale
   const locale = req.get("Accept-Language")?.split(",")[0]?.split("-")[0];
 
   if (!locale || !LOCALES[locale]) {
     req.app.locals.locale = LOCALES["en"];
+    req.app.locals.code = "en";
     return next();
   }
 
   req.app.locals.locale = LOCALES[locale];
+  req.app.locals.code = locale;
   next();
 });
 
@@ -144,6 +148,12 @@ app.post("/json/install", async function (req, res, next) {
     name: req.parsedBody["website[name]"],
     url: req.parsedBody["website[url]"],
     isEnabled: true,
+  });
+
+  await openDB.createWebsite({
+    name: req.parsedBody["website[name]"],
+    description: req.parsedBody["website[description]"],
+    url: req.parsedBody["website[url]"],
   });
 
   const config: configFile = {
@@ -224,8 +234,6 @@ app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
 
 app.use("/medias", serveStatic(join(__dirname, "medias")));
 
-app.use(Cookies());
-
-app.use(accountMiddleware);
+app.use("/admin", adminRouter);
 
 app.listen(3030);
