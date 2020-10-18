@@ -19,12 +19,6 @@ import {
 } from "./deps.ts";
 import { exists } from "./src/utils.ts";
 
-// Locales
-
-const LOCALES: any = {
-  "en": JSON.parse(await Deno.readTextFile("./locales/en.json")),
-};
-
 // Init
 
 console.log("Open News System");
@@ -45,6 +39,15 @@ const app = opine();
 
 import { Article, Author, Source } from "./src/database/config.ts";
 import cache from "./src/middlewares/cache.ts";
+import { localeType } from "./src/types/locale.ts";
+import ArticleType from "./src/types/article.ts";
+import AuthorType from "./src/types/author.ts";
+
+// Locales
+
+const LOCALES: localeType = {
+  "en": JSON.parse(await Deno.readTextFile("./locales/en.json")),
+};
 
 // View engine setup
 app.set("views", join(__dirname, "themes", open_config.theme));
@@ -147,15 +150,19 @@ app.get("/", function (req, res) {
 });
 
 app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent = await Article.where("handle", req.params.handle)
-    .first();
+  const ArticleContent: ArticleType = await Article.where(
+    "handle",
+    req.params.handle,
+  ).first();
 
   if (!ArticleContent || ArticleContent.isDraft) {
     return next();
   }
 
-  const AuthorContent = await Article.where("id", ArticleContent.id.toString())
-    .author();
+  const AuthorContent: AuthorType = await Article.where(
+    "id",
+    ArticleContent.id.toString(),
+  ).author();
 
   res.json({
     article: {
@@ -175,15 +182,20 @@ app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
 });
 
 app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent = await Article.where("handle", req.params.handle)
+  const ArticleContent: ArticleType = await Article.where(
+    "handle",
+    req.params.handle,
+  )
     .first();
 
   if (!ArticleContent || ArticleContent.isDraft) {
     return next();
   }
 
-  const AuthorContent = await Article.where("id", ArticleContent.id.toString())
-    .author();
+  const AuthorContent: AuthorType = await Article.where(
+    "id",
+    ArticleContent.id.toString(),
+  ).author();
 
   res.render("article.ejs", {
     article: {
