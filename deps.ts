@@ -1,4 +1,5 @@
 export { dirname, join } from "https://deno.land/std@0.74.0/path/mod.ts";
+export { ensureDir } from "https://deno.land/std@0.74.0/fs/ensure_dir.ts";
 export { createError } from "https://deno.land/x/http_errors@3.0.0/mod.ts";
 export {
   json,

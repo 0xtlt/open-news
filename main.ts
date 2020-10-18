@@ -7,8 +7,8 @@ let open_config = {
 };
 
 import {
-  Database,
   dirname,
+  ensureDir,
   join,
   json,
   Marked,
@@ -18,6 +18,10 @@ import {
   urlencoded,
 } from "./deps.ts";
 import { exists } from "./src/utils.ts";
+import openDB from "./src/database/config.ts";
+import cache from "./src/middlewares/cache.ts";
+import { localeType } from "./src/types/locale.ts";
+import configFile from "./src/types/configFile.ts";
 
 // Init
 
@@ -27,21 +31,23 @@ console.log("System VERSION :", VERSION);
 
 if (await exists("./config.json")) {
   console.log("Open News config...");
+  const decoder = new TextDecoder("utf-8");
+  const config: configFile = JSON.parse(decoder.decode(
+    await Deno.readFile("./config.json"),
+  ));
+  const isConnected = await openDB.setCredentials(config.database);
+
+  if (isConnected) open_config.initied = true;
+
+  if (!isConnected) console.log("Open News database not found");
 } else {
-  console.log("Open News no configured");
+  console.log("Open News not configured");
 }
 
 console.log("THEME :", open_config.theme);
 
-const decoder = new TextDecoder("utf-8");
 const __dirname = dirname(import.meta.url);
 const app = opine();
-
-import openDB from "./src/database/config.ts";
-import cache from "./src/middlewares/cache.ts";
-import { localeType } from "./src/types/locale.ts";
-import ArticleType from "./src/types/article.ts";
-import AuthorType from "./src/types/author.ts";
 
 // Locales
 
@@ -70,7 +76,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use((req, res, next) => {
+app.use((req, _, next) => {
   // determine locale
   const locale = req.get("Accept-Language")?.split(",")[0]?.split("-")[0];
 
@@ -108,25 +114,46 @@ app.post("/json/install", async function (req, res, next) {
     });
   }
 
-  const db_test = new Database("mysql", {
+  const result = await openDB.setCredentials({
     database: req.parsedBody["database[name]"],
     host: req.parsedBody["database[host]"],
     username: req.parsedBody["database[user]"],
     password: req.parsedBody["database[password]"],
-    port: Number(req.parsedBody["database[port]"]), // optional
+    port: Number(req.parsedBody["database[port]"]),
   });
 
-  if (!await db_test.ping()) {
-    await db_test.close();
+  if (!result) {
     return res.json({
       success: false,
       message: "errorDB",
     });
   }
 
-  await db_test.close();
+  await openDB.install();
 
-  res.json(req.parsedBody);
+  const config: configFile = {
+    database: {
+      database: req.parsedBody["database[name]"],
+      host: req.parsedBody["database[host]"],
+      username: req.parsedBody["database[user]"],
+      password: req.parsedBody["database[password]"],
+      port: Number(req.parsedBody["database[port]"]),
+    },
+  };
+
+  await ensureDir(__dirname).then(async () => {
+    await Deno.writeFile(
+      "config.json",
+      new TextEncoder().encode(JSON.stringify(config)),
+    );
+  });
+
+  open_config.initied = true;
+
+  res.json({
+    success: true,
+    message: "",
+  });
 });
 
 app.post("/install", function (req, res, next) {
