@@ -14,4 +14,16 @@ const exists = async (filename: string): Promise<boolean> => {
   }
 };
 
-export { exists };
+const token = (length: number): string => {
+  const alphabet =
+    "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890";
+  let result = "";
+
+  for (let i: number = 0; i < length; i++) {
+    result += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  return result;
+};
+
+export { exists, token };

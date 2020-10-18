@@ -42,7 +42,16 @@ form.addEventListener("submit", async (event) => {
     alert(responseJSON.message);
     return;
   }
+
+  setCookie("opentoken", responseJSON.message, 30);
+  window.location.reload();
 });
+
+function setCookie(name, value, days) {
+  let d = new Date();
+  d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+  document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
+}
 
 function fakeData() {
   window.userName.value = "Zeus";

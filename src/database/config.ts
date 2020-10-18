@@ -12,6 +12,7 @@ import AuthorType from "../types/author.ts";
 import resultArticle from "../types/resultArticle.ts";
 import SourceType from "../types/source.ts";
 import Values from "../types/values.ts";
+import { token } from "../utils.ts";
 
 class Source extends Model {
   static table = "source";
@@ -215,6 +216,7 @@ class OpenDB {
       name,
       description,
       gravatar: new Hash("md5").digestString(email).hex(),
+      token: token(30),
       password: pass,
     });
 
