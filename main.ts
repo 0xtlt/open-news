@@ -37,7 +37,7 @@ const decoder = new TextDecoder("utf-8");
 const __dirname = dirname(import.meta.url);
 const app = opine();
 
-import { Article, Author, Source } from "./src/database/config.ts";
+import openDB from "./src/database/config.ts";
 import cache from "./src/middlewares/cache.ts";
 import { localeType } from "./src/types/locale.ts";
 import ArticleType from "./src/types/article.ts";
@@ -150,75 +150,32 @@ app.get("/", function (req, res) {
 });
 
 app.get("/json/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent: ArticleType | null = await Article.where(
-    "handle",
-    req.params.handle,
-  ).first();
-
-  if (!ArticleContent || ArticleContent.isDraft) {
-    return next();
-  }
-
-  const AuthorContent: AuthorType | null = await Article.where(
-    "id",
-    ArticleContent.id.toString(),
-  ).author();
-
-  if (!AuthorContent) {
-    return next();
-  }
-
-  res.json({
-    article: {
-      id: ArticleContent.id,
-      title: ArticleContent.title,
-      description: ArticleContent.description,
-      content: Marked.parse(ArticleContent.content).content,
-      handle: req.params.handle,
-    },
-    author: {
-      id: AuthorContent.id,
-      name: AuthorContent.name,
-      description: AuthorContent.description,
-      gravatar: AuthorContent.gravatar,
-    },
+  const Article = await openDB.getArticle({
+    handle: req.params.handle,
   });
+
+  if (!Article) {
+    return next();
+  }
+
+  res.json(Article);
 });
 
 app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
-  const ArticleContent: ArticleType | null = await Article.where(
-    "handle",
-    req.params.handle,
-  )
-    .first();
+  const Article = await openDB.getArticle({
+    handle: req.params.handle,
+  });
 
-  if (!ArticleContent || ArticleContent.isDraft) {
+  if (!Article) {
     return next();
   }
 
-  const AuthorContent: AuthorType | null = await Article.where(
-    "id",
-    ArticleContent.id.toString(),
-  ).author();
-
-  if (!AuthorContent) {
-    return next();
-  }
+  Article.article.content = Marked.parse(Article.article.content).content;
+  Article.author.description = Marked.parse(Article.author.description).content;
 
   res.render("article.ejs", {
-    article: {
-      id: ArticleContent.id,
-      title: ArticleContent.title,
-      description: ArticleContent.description,
-      content: Marked.parse(ArticleContent.content).content,
-      handle: req.params.handle,
-    },
-    author: {
-      id: AuthorContent.id,
-      name: AuthorContent.name,
-      description: AuthorContent.description,
-      gravatar: AuthorContent.gravatar,
-    },
+    article: Article,
+    locale: req.app.locals.locale,
   });
 });
 

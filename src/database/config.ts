@@ -1,12 +1,8 @@
 import { Database, DataTypes, Model, Relationships } from "../../deps.ts";
-
-const db = new Database({ dialect: "mysql", debug: false }, {
-  database: "opennews",
-  host: "localhost",
-  username: "opennews",
-  password: "",
-  port: 8889,
-});
+import ArticleType from "../types/article.ts";
+import AuthorType from "../types/author.ts";
+import resultArticle from "../types/resultArticle.ts";
+import Values from "../types/values.ts";
 
 class Source extends Model {
   static table = "source";
@@ -121,9 +117,77 @@ class Website extends Model {
   };
 }
 
-db.link([Source, Author, Article, Media, Report, Analytic, Website]);
+//db.link([Source, Author, Article, Media, Report, Analytic, Website]);
 
 //await db.sync({ drop: false });
 //await db.close();
 
-export { Analytic, Article, Author, Media, Report, Source, Website };
+class OpenDB {
+  #db: null | Database = null;
+  constructor() {
+  }
+
+  async setCredentials(
+    credentials: {
+      database: string;
+      host: string;
+      username: string;
+      password: string;
+      port: number;
+    },
+  ): Promise<boolean> {
+    const testConnection = new Database(
+      { dialect: "mysql", debug: false },
+      credentials,
+    );
+
+    if (!await testConnection.ping()) {
+      return false;
+    }
+
+    this.#db = testConnection;
+    this.#db.link([Source, Author, Article, Media, Report, Analytic, Website]);
+
+    return true;
+  }
+
+  async install(): Promise<boolean> {
+    await this.#db?.sync();
+
+    return true;
+  }
+
+  async getArticle(where: Values): Promise<resultArticle> {
+    const ArticleContent: ArticleType | null = await Article.where(where)
+      .first();
+
+    if (!ArticleContent) return undefined;
+
+    const AuthorContent: AuthorType | null = await Article.where(
+      "id",
+      ArticleContent.id.toString(),
+    ).author();
+
+    if (!AuthorContent) return undefined;
+
+    return {
+      article: {
+        id: ArticleContent.id,
+        title: ArticleContent.title,
+        description: ArticleContent.description,
+        content: ArticleContent.content,
+        handle: ArticleContent.handle,
+      },
+      author: {
+        id: AuthorContent.id,
+        name: AuthorContent.name,
+        description: AuthorContent.description,
+        gravatar: AuthorContent.gravatar,
+      },
+    };
+  }
+}
+
+const openDB = new OpenDB();
+
+export default openDB;
