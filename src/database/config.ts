@@ -1,7 +1,16 @@
-import { Database, DataTypes, Model, Relationships } from "../../deps.ts";
+import {
+  Database,
+  DataTypes,
+  gensalt,
+  Hash,
+  hashpw,
+  Model,
+  Relationships,
+} from "../../deps.ts";
 import ArticleType from "../types/article.ts";
 import AuthorType from "../types/author.ts";
 import resultArticle from "../types/resultArticle.ts";
+import SourceType from "../types/source.ts";
 import Values from "../types/values.ts";
 
 class Source extends Model {
@@ -157,6 +166,8 @@ class OpenDB {
     return true;
   }
 
+  // Article
+
   async getArticle(where: Values): Promise<resultArticle> {
     const ArticleContent: ArticleType | null = await Article.where(where)
       .first();
@@ -185,6 +196,38 @@ class OpenDB {
         gravatar: AuthorContent.gravatar,
       },
     };
+  }
+
+  // Author
+  async createAuthor(
+    data: {
+      name: string;
+      description: string;
+      email: string;
+      password: string;
+    },
+  ): Promise<AuthorType> {
+    const { name, description, email, password } = data;
+
+    const pass = await hashpw(password, await gensalt(10));
+
+    const author: AuthorType = await Author.create({
+      name,
+      description,
+      gravatar: new Hash("md5").digestString(email).hex(),
+      password: pass,
+    });
+
+    return author;
+  }
+
+  // Source
+  async createSource(
+    data: { name: string; url: string; isEnabled: boolean },
+  ): Promise<SourceType> {
+    const source: SourceType = await Source.create(data);
+
+    return source;
   }
 }
 

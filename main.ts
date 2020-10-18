@@ -131,6 +131,19 @@ app.post("/json/install", async function (req, res, next) {
 
   await openDB.install();
 
+  await openDB.createAuthor({
+    name: req.parsedBody["user[name]"],
+    description: req.parsedBody["website[description]"],
+    email: req.parsedBody["user[email]"],
+    password: req.parsedBody["database[password]"],
+  });
+
+  await openDB.createSource({
+    name: req.parsedBody["website[name]"],
+    url: req.parsedBody["website[url]"],
+    isEnabled: true,
+  });
+
   const config: configFile = {
     database: {
       database: req.parsedBody["database[name]"],
@@ -201,7 +214,8 @@ app.get("/read/:handle", cache(CACHE_TIME), async function (req, res, next) {
   Article.author.description = Marked.parse(Article.author.description).content;
 
   res.render("article.ejs", {
-    article: Article,
+    article: Article.article,
+    author: Article.author,
     locale: req.app.locals.locale,
   });
 });

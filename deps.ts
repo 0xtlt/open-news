@@ -20,4 +20,9 @@ export {
   Relationships,
 } from "https://deno.land/x/denodb@v1.0.12/mod.ts";
 
-export * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+export {
+  gensalt,
+  hashpw,
+} from "https://raw.githubusercontent.com/JamesBroadberry/deno-bcrypt/master/src/bcrypt/bcrypt.ts";
+
+export { encode, Hash } from "https://deno.land/x/checksum@1.4.0/mod.ts";
